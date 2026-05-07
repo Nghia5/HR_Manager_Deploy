@@ -105,8 +105,8 @@
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script >
-       document
+    <script>
+      document
         .getElementById("registerForm")
         .addEventListener("submit", async function (e) {
           e.preventDefault();
@@ -121,16 +121,13 @@
             '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
 
           try {
-            const response = await fetch(
-              "http://localhost:8080/api/auth/register",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, email, password }),
-              },
-            );
+            // SỬA QUAN TRỌNG: Bỏ localhost, dùng đường dẫn tương đối
+            const response = await fetch("/api/auth/register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username, email, password }),
+            });
 
-            // Spring Boot trả về String nên dùng text() thay vì json()
             const data = await response.text();
 
             if (response.ok) {
@@ -139,16 +136,17 @@
                 title: "Thành công",
                 text: data,
               }).then(() => {
-                window.location.href = "login.html"; // Đăng ký xong tự động về trang đăng nhập
+                window.location.href = "login.html";
               });
             } else {
               Swal.fire("Lỗi đăng ký", data, "error");
             }
           } catch (error) {
+            console.error("Lỗi kết nối:", error);
             Swal.fire(
               "Lỗi kết nối",
-              "Không thể kết nối đến máy chủ Backend",
-              "error",
+              "Không thể kết nối đến máy chủ Backend. Kiểm tra link server hoặc Database!",
+              "error"
             );
           } finally {
             btnRegister.disabled = false;
