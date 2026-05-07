@@ -239,8 +239,8 @@
 
     <script>
       const token = localStorage.getItem("token");
-      const API_POSITIONS = "http:///api/positions";
-      const API_DEPARTMENTS = "http:///api/departments";
+      const API_POSITIONS = "/api/positions";
+      const API_DEPARTMENTS = "/api/departments";
 
       let positionsList = [];
       let departmentsList = []; // Lưu danh sách khoa để nhét vào Select
@@ -264,6 +264,7 @@
       async function loadDepartments() {
         try {
           const response = await fetch(API_DEPARTMENTS, {
+            method: "GET",
             headers: getHeaders(),
           });
           if (response.ok) {
