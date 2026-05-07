@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HR Management | Quản lý Chức vụ</title>
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+  </head>
+  <body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+      <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"
+              ><i class="fas fa-bars"></i
+            ></a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+              <i class="far fa-user"></i>
+              <span id="displayUsername" class="ml-1 font-weight-bold"
+                >Đang tải...</span
+              >
+            </a>
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+              <a href="#" class="dropdown-item" onclick="handleLogout()">
+                <i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất
+              </a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+      <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <a href="index.html" class="brand-link">
+          <span class="brand-text font-weight-light ml-3"
+            ><i class="fas fa-users-cog mr-2"></i> <b>HR</b> System</span
+          >
+        </a>
+        <div class="sidebar">
+          <nav class="mt-4">
+            <ul
+              class="nav nav-pills nav-sidebar flex-column"
+              data-widget="treeview"
+              role="menu"
+            >
+              <li class="nav-item">
+                <a href="index.html" class="nav-link">
+                  <i class="nav-icon fas fa-tachometer-alt"></i>
+                  <p>Bảng điều khiển</p>
+                </a>
+              </li>
+              <li class="nav-header">QUẢN LÝ TỔ CHỨC</li>
+              <li class="nav-item">
+                <a href="departments.html" class="nav-link">
+                  <i class="nav-icon fas fa-building"></i>
+                  <p>Khoa / Phòng ban</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="positions.html" class="nav-link active">
+                  <i class="nav-icon fas fa-briefcase"></i>
+                  <p>Chức vụ / Vị trí</p>
+                </a>
+              </li>
+              <li class="nav-header">QUẢN LÝ NHÂN SỰ</li>
+              <li class="nav-item">
+                <a href="employees.html" class="nav-link">
+                  <i class="nav-icon fas fa-user-tie"></i>
+                  <p>Danh sách Nhân viên</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="employeeposition.html" class="nav-link">
+                  <i class="nav-icon fas fa-history"></i>
+                  <p>Lịch sử Công tác</p>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <div class="content-wrapper">
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Quản lý Chức vụ / Vị trí</h1>
+              </div>
+              <div class="col-sm-6 text-right">
+                <button class="btn btn-primary" onclick="openModal('ADD')">
+                  <i class="fas fa-plus"></i> Thêm mới
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section class="content">
+          <div class="container-fluid">
+            <div class="card">
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                  <thead>
+                    <tr>
+                      <th>STT</th>
+                      <th>Mã CV</th>
+                      <th>Tên Chức vụ</th>
+                      <th>Cấp bậc</th>
+                      <th>Thuộc Khoa/Phòng ban</th>
+                      <th class="text-center">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableBody">
+                    <tr>
+                      <td colspan="6" class="text-center">
+                        Đang tải dữ liệu...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="modal fade" id="positionModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalTitle">Thêm mới Chức vụ</h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form id="positionForm">
+              <div class="modal-body">
+                <input type="hidden" id="posId" />
+
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label>Mã Chức vụ <span class="text-danger">*</span></label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="posCode"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label
+                      >Tên Chức vụ <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="posName"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label
+                      >Thuộc Khoa / Phòng ban
+                      <span class="text-danger">*</span></label
+                    >
+                    <select class="form-control" id="posDepartment" required>
+                      <option value="">-- Chọn Khoa / Phòng ban --</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label>Cấp bậc (VD: Bậc 1, Bậc 2...)</label>
+                    <input type="text" class="form-control" id="posLevel" />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 form-group">
+                    <label>Mô tả công việc</label>
+                    <textarea
+                      class="form-control"
+                      id="posDesc"
+                      rows="3"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Hủy bỏ
+                </button>
+                <button type="submit" class="btn btn-primary" id="btnSave">
+                  Lưu thông tin
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <footer class="main-footer">
+        <strong>Copyright &copy; 2026 HR Management System.</strong>
+      </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+      const token = localStorage.getItem("token");
+      const API_POSITIONS = "http://localhost:8080/api/positions";
+      const API_DEPARTMENTS = "http://localhost:8080/api/departments";
+
+      let positionsList = [];
+      let departmentsList = []; // Lưu danh sách khoa để nhét vào Select
+
+      if (!token) window.location.href = "login.html";
+      document.getElementById("displayUsername").innerText =
+        localStorage.getItem("username") || "Admin";
+
+      function handleLogout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        window.location.href = "login.html";
+      }
+
+      const getHeaders = () => ({
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      });
+
+      // 1. Lấy danh sách KHOA đổ vào thẻ <select>
+      async function loadDepartments() {
+        try {
+          const response = await fetch(API_DEPARTMENTS, {
+            headers: getHeaders(),
+          });
+          if (response.ok) {
+            departmentsList = await response.json();
+            const selectDept = document.getElementById("posDepartment");
+
+            // Giữ lại option đầu tiên (-- Chọn khoa --)
+            selectDept.innerHTML =
+              '<option value="">-- Chọn Khoa / Phòng ban --</option>';
+
+            // Render các option
+            departmentsList.forEach((dept) => {
+              selectDept.innerHTML += `<option value="${dept.id}">${dept.name} (${dept.code})</option>`;
+            });
+          }
+        } catch (error) {
+          console.error("Lỗi tải danh sách khoa", error);
+        }
+      }
+
+      // 2. Lấy danh sách CHỨC VỤ hiển thị lên Bảng
+      async function loadPositions() {
+        try {
+          const response = await fetch(API_POSITIONS, {
+            headers: getHeaders(),
+          });
+          if (response.ok) {
+            positionsList = await response.json();
+            renderTable(positionsList);
+          } else {
+            Swal.fire("Lỗi", "Không thể tải dữ liệu chức vụ", "error");
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      // 3. Render Table
+      function renderTable(data) {
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+
+        if (data.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="6" class="text-center">Chưa có dữ liệu. Hãy thêm mới!</td></tr>';
+          return;
+        }
+
+        data.forEach((pos, index) => {
+          const tr = document.createElement("tr");
+          // Nhờ DTO chúng ta đã map sẵn departmentName từ Backend, chỉ việc gọi ra dùng
+          tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td><b>${pos.code}</b></td>
+        <td>${pos.name}</td>
+        <td><span class="badge badge-info">${pos.level || "Chưa xếp bậc"}</span></td>
+        <td>${pos.departmentName}</td> 
+        <td class="text-center">
+          <button class="btn btn-sm btn-info mr-1" onclick="openModal('EDIT', '${pos.id}')"><i class="fas fa-edit"></i> Sửa</button>
+          <button class="btn btn-sm btn-danger" onclick="deletePosition('${pos.id}')"><i class="fas fa-trash"></i> Xóa</button>
+        </td>
+      `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // 4. Mở Modal
+      function openModal(mode, id = null) {
+        const form = document.getElementById("positionForm");
+        form.reset();
+
+        if (mode === "ADD") {
+          document.getElementById("modalTitle").innerText = "Thêm mới Chức vụ";
+          document.getElementById("posId").value = "";
+        } else if (mode === "EDIT") {
+          document.getElementById("modalTitle").innerText = "Cập nhật Chức vụ";
+
+          const pos = positionsList.find((p) => p.id === id);
+          if (pos) {
+            document.getElementById("posId").value = pos.id;
+            document.getElementById("posCode").value = pos.code;
+            document.getElementById("posName").value = pos.name;
+            document.getElementById("posLevel").value = pos.level || "";
+            document.getElementById("posDepartment").value = pos.departmentId; // Tự động select đúng khoa
+            document.getElementById("posDesc").value = pos.description || "";
+          }
+        }
+        $("#positionModal").modal("show");
+      }
+
+      // 5. Lưu dữ liệu (POST / PUT)
+      document
+        .getElementById("positionForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const id = document.getElementById("posId").value;
+          const requestData = {
+            code: document.getElementById("posCode").value,
+            name: document.getElementById("posName").value,
+            level: document.getElementById("posLevel").value,
+            departmentId: document.getElementById("posDepartment").value, // Lấy ID của khoa đã chọn
+            description: document.getElementById("posDesc").value,
+          };
+
+          const isEdit = id !== "";
+          const url = isEdit ? `${API_POSITIONS}/${id}` : API_POSITIONS;
+          const method = isEdit ? "PUT" : "POST";
+
+          try {
+            const response = await fetch(url, {
+              method: method,
+              headers: getHeaders(),
+              body: JSON.stringify(requestData),
+            });
+
+            if (response.ok) {
+              $("#positionModal").modal("hide");
+              Swal.fire("Thành công", "Đã lưu thông tin chức vụ!", "success");
+              loadPositions();
+            } else {
+              const errorText = await response.text();
+              Swal.fire("Lỗi", errorText, "error");
+            }
+          } catch (error) {
+            Swal.fire("Lỗi", "Không thể kết nối máy chủ", "error");
+          }
+        });
+
+      // 6. Xóa dữ liệu (DELETE)
+      function deletePosition(id) {
+        Swal.fire({
+          title: "Xác nhận xóa?",
+          text: "Chức vụ này sẽ được xóa mềm khỏi hệ thống.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "Đồng ý xóa",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const response = await fetch(`${API_POSITIONS}/${id}`, {
+                method: "DELETE",
+                headers: getHeaders(),
+              });
+
+              if (response.ok) {
+                Swal.fire("Đã xóa!", "Cập nhật thành công.", "success");
+                loadPositions();
+              } else {
+                Swal.fire("Lỗi", await response.text(), "error");
+              }
+            } catch (error) {
+              Swal.fire("Lỗi", "Không thể kết nối máy chủ", "error");
+            }
+          }
+        });
+      }
+
+      // Khởi chạy khi Load trang: Lấy danh sách Khoa trước, rồi lấy danh sách Chức vụ
+      $(document).ready(function () {
+        loadDepartments().then(() => {
+          loadPositions();
+        });
+      });
+    </script>
+  </body>
+</html>

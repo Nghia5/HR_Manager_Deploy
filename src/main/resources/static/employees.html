@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HR Management | Quản lý Nhân sự</title>
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <style>
+      /* Chỉnh sửa chút xíu để form trong Modal gọn gàng hơn */
+      .modal-body label {
+        font-size: 0.9rem;
+        margin-bottom: 0.2rem;
+      }
+      .form-group {
+        margin-bottom: 0.8rem;
+      }
+    </style>
+  </head>
+  <body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+      <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"
+              ><i class="fas fa-bars"></i
+            ></a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+              <i class="far fa-user"></i>
+              <span id="displayUsername" class="ml-1 font-weight-bold"
+                >Đang tải...</span
+              >
+            </a>
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+              <a href="#" class="dropdown-item" onclick="handleLogout()">
+                <i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất
+              </a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+      <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <a href="index.html" class="brand-link">
+          <span class="brand-text font-weight-light ml-3"
+            ><i class="fas fa-users-cog mr-2"></i> <b>HR</b> System</span
+          >
+        </a>
+        <div class="sidebar">
+          <nav class="mt-4">
+            <ul
+              class="nav nav-pills nav-sidebar flex-column"
+              data-widget="treeview"
+              role="menu"
+            >
+              <li class="nav-item">
+                <a href="index.html" class="nav-link">
+                  <i class="nav-icon fas fa-tachometer-alt"></i>
+                  <p>Bảng điều khiển</p>
+                </a>
+              </li>
+              <li class="nav-header">QUẢN LÝ TỔ CHỨC</li>
+              <li class="nav-item">
+                <a href="departments.html" class="nav-link">
+                  <i class="nav-icon fas fa-building"></i>
+                  <p>Khoa / Phòng ban</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="positions.html" class="nav-link">
+                  <i class="nav-icon fas fa-briefcase"></i>
+                  <p>Chức vụ / Vị trí</p>
+                </a>
+              </li>
+              <li class="nav-header">QUẢN LÝ NHÂN SỰ</li>
+              <li class="nav-item">
+                <a href="employees.html" class="nav-link active">
+                  <i class="nav-icon fas fa-user-tie"></i>
+                  <p>Danh sách Nhân viên</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="employeeposition.html" class="nav-link">
+                  <i class="nav-icon fas fa-history"></i>
+                  <p>Lịch sử Công tác</p>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <div class="content-wrapper">
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Danh sách Nhân sự</h1>
+              </div>
+              <div class="col-sm-6 text-right">
+                <button class="btn btn-primary" onclick="openModal('ADD')">
+                  <i class="fas fa-user-plus"></i> Thêm Nhân sự
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section class="content">
+          <div class="container-fluid">
+            <div class="card">
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap table-striped">
+                  <thead>
+                    <tr>
+                      <th>Mã NV</th>
+                      <th>Họ và Tên</th>
+                      <th>Email</th>
+                      <th>Khoa / Phòng ban</th>
+                      <th>Chức vụ</th>
+                      <th>Hệ số lương</th>
+                      <th class="text-center">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableBody">
+                    <tr>
+                      <td colspan="7" class="text-center">
+                        Đang tải dữ liệu...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="modal fade" id="employeeModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-xl" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalTitle">Thêm mới Nhân sự</h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form id="employeeForm">
+              <div class="modal-body">
+                <input type="hidden" id="empId" />
+
+                <h6
+                  class="text-primary font-weight-bold border-bottom pb-2 mb-3"
+                >
+                  1. Thông tin cá nhân
+                </h6>
+                <div class="row">
+                  <div class="col-md-3 form-group">
+                    <label
+                      >Mã Nhân viên <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="empCode"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-3 form-group">
+                    <label>Họ và tên <span class="text-danger">*</span></label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="empFullName"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-3 form-group">
+                    <label>Ngày sinh</label>
+                    <input type="date" class="form-control" id="empDOB" />
+                  </div>
+                  <div class="col-md-3 form-group">
+                    <label>Giới tính</label>
+                    <select class="form-control" id="empGender">
+                      <option value="1">Nam</option>
+                      <option value="2">Nữ</option>
+                      <option value="0">Khác</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-4 form-group">
+                    <label>Email <span class="text-danger">*</span></label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="empEmail"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-4 form-group">
+                    <label>Số điện thoại</label>
+                    <input type="text" class="form-control" id="empPhone" />
+                  </div>
+                  <div class="col-md-4 form-group">
+                    <label>Địa chỉ</label>
+                    <input type="text" class="form-control" id="empAddress" />
+                  </div>
+                </div>
+
+                <h6
+                  class="text-primary font-weight-bold border-bottom pb-2 mt-3 mb-3"
+                >
+                  2. Thông tin công tác
+                </h6>
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label
+                      >Khoa / Phòng ban
+                      <span class="text-danger">*</span></label
+                    >
+                    <select
+                      class="form-control"
+                      id="empDepartment"
+                      required
+                      onchange="handleDepartmentChange()"
+                    >
+                      <option value="">-- Chọn Khoa / Phòng ban --</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label
+                      >Chức vụ / Vị trí
+                      <span class="text-danger">*</span></label
+                    >
+                    <select class="form-control" id="empPosition" required>
+                      <option value="">-- Vui lòng chọn Khoa trước --</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-4 form-group">
+                    <label>Ngày tuyển dụng</label>
+                    <input type="date" class="form-control" id="empHireDate" />
+                  </div>
+                  <div class="col-md-4 form-group">
+                    <label>Loại hợp đồng</label>
+                    <input type="text" class="form-control" id="empContract" />
+                  </div>
+                  <div class="col-md-4 form-group">
+                    <label>Hệ số lương</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      class="form-control"
+                      id="empSalary"
+                    />
+                  </div>
+                </div>
+
+                <h6
+                  class="text-primary font-weight-bold border-bottom pb-2 mt-3 mb-3"
+                >
+                  3. Trình độ học vấn
+                </h6>
+                <div class="row">
+                  <div class="col-md-4 form-group">
+                    <label>Học vị (VD: ThS, TS)</label>
+                    <input type="text" class="form-control" id="empDegree" />
+                  </div>
+                  <div class="col-md-4 form-group">
+                    <label>Học hàm (VD: PGS, GS)</label>
+                    <input type="text" class="form-control" id="empTitle" />
+                  </div>
+                  <div class="col-md-4 form-group">
+                    <label>Chuyên môn</label>
+                    <input type="text" class="form-control" id="empSpec" />
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer bg-light">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Hủy bỏ
+                </button>
+                <button type="submit" class="btn btn-primary" id="btnSave">
+                  <i class="fas fa-save"></i> Lưu thông tin
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <footer class="main-footer">
+        <strong>Copyright &copy; 2026 HR Management System.</strong>
+      </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+      const token = localStorage.getItem("token");
+      const API_EMPLOYEES = "http://localhost:8080/api/employees";
+      const API_DEPARTMENTS = "http://localhost:8080/api/departments";
+      const API_POSITIONS_BY_DEPT =
+        "http://localhost:8080/api/positions/department"; // Rất quan trọng
+
+      let employeesList = [];
+
+      if (!token) window.location.href = "login.html";
+      document.getElementById("displayUsername").innerText =
+        localStorage.getItem("username") || "Admin";
+
+      function handleLogout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        window.location.href = "login.html";
+      }
+
+      const getHeaders = () => ({
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      });
+
+      // 1. Tải danh sách Khoa đổ vào Select
+      async function loadDepartments() {
+        try {
+          const res = await fetch(API_DEPARTMENTS, { headers: getHeaders() });
+          if (res.ok) {
+            const depts = await res.json();
+            const selectDept = document.getElementById("empDepartment");
+            selectDept.innerHTML =
+              '<option value="">-- Chọn Khoa / Phòng ban --</option>';
+            depts.forEach((d) => {
+              selectDept.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+            });
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // 2. Sự kiện khi Đổi Khoa -> Tải danh sách Chức vụ tương ứng
+      async function handleDepartmentChange(selectedPositionId = null) {
+        const deptId = document.getElementById("empDepartment").value;
+        const selectPos = document.getElementById("empPosition");
+
+        if (!deptId) {
+          selectPos.innerHTML =
+            '<option value="">-- Vui lòng chọn Khoa trước --</option>';
+          return;
+        }
+
+        selectPos.innerHTML = '<option value="">Đang tải chức vụ...</option>';
+
+        try {
+          const res = await fetch(`${API_POSITIONS_BY_DEPT}/${deptId}`, {
+            headers: getHeaders(),
+          });
+          if (res.ok) {
+            const positions = await res.json();
+            selectPos.innerHTML =
+              '<option value="">-- Chọn Chức vụ --</option>';
+            positions.forEach((p) => {
+              selectPos.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+            });
+
+            // Nếu đang trong chế độ Edit, set lại giá trị chức vụ cũ
+            if (selectedPositionId) {
+              selectPos.value = selectedPositionId;
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // 3. Tải danh sách Nhân viên
+      async function loadEmployees() {
+        try {
+          const res = await fetch(API_EMPLOYEES, { headers: getHeaders() });
+          if (res.ok) {
+            employeesList = await res.json();
+            renderTable(employeesList);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      function renderTable(data) {
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+        if (data.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="7" class="text-center">Chưa có nhân sự nào.</td></tr>';
+          return;
+        }
+        data.forEach((emp) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+        <td><b>${emp.code}</b></td>
+        <td>${emp.fullName}</td>
+        <td>${emp.email}</td>
+        <td>${emp.departmentName}</td>
+        <td><span class="badge badge-success">${emp.positionName}</span></td>
+        <td>${emp.salaryCoefficient || "0.00"}</td>
+        <td class="text-center">
+          <button class="btn btn-sm btn-info mr-1" onclick="openModal('EDIT', '${emp.id}')"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-sm btn-danger" onclick="deleteEmployee('${emp.id}')"><i class="fas fa-trash"></i></button>
+        </td>
+      `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // 4. Mở Modal Thêm/Sửa
+      async function openModal(mode, id = null) {
+        const form = document.getElementById("employeeForm");
+        form.reset();
+        document.getElementById("empPosition").innerHTML =
+          '<option value="">-- Vui lòng chọn Khoa trước --</option>';
+
+        if (mode === "ADD") {
+          document.getElementById("modalTitle").innerText = "Thêm mới Nhân sự";
+          document.getElementById("empId").value = "";
+        } else if (mode === "EDIT") {
+          document.getElementById("modalTitle").innerText = "Cập nhật Nhân sự";
+          const emp = employeesList.find((e) => e.id === id);
+
+          if (emp) {
+            document.getElementById("empId").value = emp.id;
+            document.getElementById("empCode").value = emp.code;
+            document.getElementById("empFullName").value = emp.fullName;
+            document.getElementById("empDOB").value = emp.dateOfBirth || "";
+            document.getElementById("empGender").value = emp.gender || "1";
+            document.getElementById("empEmail").value = emp.email;
+            document.getElementById("empPhone").value = emp.phone || "";
+            document.getElementById("empAddress").value = emp.address || "";
+
+            // Học vấn & Công việc
+            document.getElementById("empHireDate").value = emp.hireDate || "";
+            document.getElementById("empContract").value =
+              emp.contractType || "";
+            document.getElementById("empSalary").value =
+              emp.salaryCoefficient || "";
+            document.getElementById("empDegree").value =
+              emp.academicDegree || "";
+            document.getElementById("empTitle").value = emp.academicTitle || "";
+            document.getElementById("empSpec").value = emp.specialization || "";
+
+            // Xử lý Cascading Dropdown: Phải đợi Khoa load xong Chức vụ thì mới set được giá trị Chức vụ
+            document.getElementById("empDepartment").value = emp.departmentId;
+            await handleDepartmentChange(emp.positionId);
+          }
+        }
+        $("#employeeModal").modal("show");
+      }
+
+      // 5. Lưu dữ liệu
+      document
+        .getElementById("employeeForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const id = document.getElementById("empId").value;
+
+          // Thu thập dữ liệu
+          const requestData = {
+            code: document.getElementById("empCode").value,
+            fullName: document.getElementById("empFullName").value,
+            dateOfBirth: document.getElementById("empDOB").value || null,
+            gender: document.getElementById("empGender").value,
+            email: document.getElementById("empEmail").value,
+            phone: document.getElementById("empPhone").value,
+            address: document.getElementById("empAddress").value,
+            departmentId: document.getElementById("empDepartment").value,
+            positionId: document.getElementById("empPosition").value,
+            hireDate: document.getElementById("empHireDate").value || null,
+            contractType: document.getElementById("empContract").value,
+            salaryCoefficient:
+              document.getElementById("empSalary").value || null,
+            academicDegree: document.getElementById("empDegree").value,
+            academicTitle: document.getElementById("empTitle").value,
+            specialization: document.getElementById("empSpec").value,
+            userId: null, // Hiện tại chưa làm chức năng map với User
+          };
+
+          const isEdit = id !== "";
+          const url = isEdit ? `${API_EMPLOYEES}/${id}` : API_EMPLOYEES;
+          const method = isEdit ? "PUT" : "POST";
+
+          try {
+            const response = await fetch(url, {
+              method: method,
+              headers: getHeaders(),
+              body: JSON.stringify(requestData),
+            });
+
+            if (response.ok) {
+              $("#employeeModal").modal("hide");
+              Swal.fire("Thành công", "Đã lưu thông tin nhân sự!", "success");
+              loadEmployees();
+            } else {
+              const errorText = await response.text();
+              Swal.fire("Lỗi", errorText, "error");
+            }
+          } catch (error) {
+            Swal.fire("Lỗi", "Không thể kết nối máy chủ", "error");
+          }
+        });
+
+      // 6. Xóa nhân viên
+      function deleteEmployee(id) {
+        Swal.fire({
+          title: "Xóa nhân sự?",
+          text: "Nhân sự này sẽ được đánh dấu là Đã nghỉ việc (Xóa mềm).",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "Đồng ý xóa",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const response = await fetch(`${API_EMPLOYEES}/${id}`, {
+                method: "DELETE",
+                headers: getHeaders(),
+              });
+
+              if (response.ok) {
+                Swal.fire("Đã xóa!", "Cập nhật thành công.", "success");
+                loadEmployees();
+              } else {
+                Swal.fire("Lỗi", await response.text(), "error");
+              }
+            } catch (error) {
+              Swal.fire("Lỗi", "Không thể kết nối máy chủ", "error");
+            }
+          }
+        });
+      }
+
+      // Khởi chạy khi tải trang
+      $(document).ready(function () {
+        loadDepartments(); // Tải sẵn danh sách khoa để dùng cho Modal
+        loadEmployees(); // Tải danh sách nhân viên ra bảng
+      });
+    </script>
+  </body>
+</html>

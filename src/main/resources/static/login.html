@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HR Management | Đăng nhập</title>
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+  </head>
+  <body class="hold-transition login-page">
+    <div class="login-box">
+      <div class="login-logo">
+        <a href="#"><b>HR</b> Management</a>
+      </div>
+
+      <div class="card">
+        <div class="card-body login-card-body">
+          <p class="login-box-msg">Đăng nhập để bắt đầu phiên làm việc</p>
+
+          <form id="loginForm">
+            <div class="input-group mb-3">
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                placeholder="Tên đăng nhập"
+                required
+              />
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-user"></span>
+                </div>
+              </div>
+            </div>
+            <div class="input-group mb-3">
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                placeholder="Mật khẩu"
+                required
+              />
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-lock"></span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-block"
+                  id="btnLogin"
+                >
+                  Đăng nhập
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <div class="social-auth-links text-center mb-3">
+            <p>- HOẶC -</p>
+          </div>
+
+          <p class="mb-1">
+            <a href="forgot-password.html">Tôi đã quên mật khẩu</a>
+          </p>
+          <p class="mb-0">
+            <a href="register.html" class="text-center"
+              >Đăng ký thành viên mới</a
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script >
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault(); // Ngăn load lại trang
+
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+          const btnLogin = document.getElementById("btnLogin");
+
+          btnLogin.disabled = true;
+          btnLogin.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+
+          try {
+            const response = await fetch(
+              "http://localhost:8080/api/auth/login",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+              },
+            );
+
+            const data = await response.json();
+
+            if (response.ok) {
+              // Lưu Token và Username vào LocalStorage
+              localStorage.setItem("token", data.accessToken);
+              localStorage.setItem("username", data.username);
+
+              Swal.fire({
+                icon: "success",
+                title: "Đăng nhập thành công!",
+                showConfirmButton: false,
+                timer: 1500,
+              }).then(() => {
+                window.location.href = "index.html"; // Chuyển hướng sang trang Dashboard
+              });
+            } else {
+              Swal.fire(
+                "Lỗi đăng nhập",
+                data.message || "Sai tài khoản hoặc mật khẩu",
+                "error",
+              );
+            }
+          } catch (error) {
+            Swal.fire(
+              "Lỗi kết nối",
+              "Không thể kết nối đến máy chủ Backend",
+              "error",
+            );
+          } finally {
+            btnLogin.disabled = false;
+            btnLogin.innerHTML = "Đăng nhập";
+          }
+        });
+    </script>
+  </body>
+</html>

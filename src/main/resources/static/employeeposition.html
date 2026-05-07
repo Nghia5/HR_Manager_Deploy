@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HR Management | Lịch sử Công tác</title>
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+  </head>
+  <body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+      <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#"
+              ><i class="fas fa-bars"></i
+            ></a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+              <i class="far fa-user"></i>
+              <span id="displayUsername" class="ml-1 font-weight-bold"
+                >Đang tải...</span
+              >
+            </a>
+            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+              <a href="#" class="dropdown-item" onclick="handleLogout()"
+                ><i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất</a
+              >
+            </div>
+          </li>
+        </ul>
+      </nav>
+
+      <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <a href="index.html" class="brand-link">
+          <span class="brand-text font-weight-light ml-3"
+            ><i class="fas fa-users-cog mr-2"></i> <b>HR</b> System</span
+          >
+        </a>
+        <div class="sidebar">
+          <nav class="mt-4">
+            <ul
+              class="nav nav-pills nav-sidebar flex-column"
+              data-widget="treeview"
+              role="menu"
+            >
+              <li class="nav-item">
+                <a href="index.html" class="nav-link"
+                  ><i class="nav-icon fas fa-tachometer-alt"></i>
+                  <p>Bảng điều khiển</p></a
+                >
+              </li>
+
+              <li class="nav-header">QUẢN LÝ TỔ CHỨC</li>
+              <li class="nav-item">
+                <a href="departments.html" class="nav-link"
+                  ><i class="nav-icon fas fa-building"></i>
+                  <p>Khoa / Phòng ban</p></a
+                >
+              </li>
+              <li class="nav-item">
+                <a href="positions.html" class="nav-link"
+                  ><i class="nav-icon fas fa-briefcase"></i>
+                  <p>Chức vụ / Vị trí</p></a
+                >
+              </li>
+
+              <li class="nav-header">QUẢN LÝ NHÂN SỰ</li>
+              <li class="nav-item">
+                <a href="employees.html" class="nav-link"
+                  ><i class="nav-icon fas fa-user-tie"></i>
+                  <p>Danh sách Nhân viên</p></a
+                >
+              </li>
+              <li class="nav-item">
+                <a href="employeeposition.html" class="nav-link active">
+                  <i class="nav-icon fas fa-history"></i>
+                  <p>Lịch sử Công tác</p>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <div class="content-wrapper">
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Lịch sử Phân công / Kiêm nhiệm</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section class="content">
+          <div class="container-fluid">
+            <div class="card card-outline card-primary">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label
+                      >Chọn Nhân viên để xem lịch sử
+                      <span class="text-danger">*</span></label
+                    >
+                    <select
+                      class="form-control"
+                      id="filterEmployee"
+                      onchange="loadHistory()"
+                    >
+                      <option value="">
+                        -- Đang tải danh sách nhân viên --
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 text-right" style="padding-top: 30px">
+                    <button
+                      class="btn btn-primary"
+                      id="btnAddHistory"
+                      onclick="openModal('ADD')"
+                      disabled
+                    >
+                      <i class="fas fa-plus"></i> Thêm Phân công mới
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap table-striped">
+                  <thead>
+                    <tr>
+                      <th>STT</th>
+                      <th>Chức vụ</th>
+                      <th>Thuộc Khoa/Phòng</th>
+                      <th>Ngày bắt đầu</th>
+                      <th>Ngày kết thúc</th>
+                      <th>Mô tả / Quyết định</th>
+                      <th class="text-center">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableBody">
+                    <tr>
+                      <td colspan="7" class="text-center">
+                        Vui lòng chọn một Nhân viên ở phía trên.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="modal fade" id="historyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalTitle">Thêm mới Lịch sử</h5>
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+            <form id="historyForm">
+              <div class="modal-body">
+                <input type="hidden" id="epId" />
+
+                <div class="row mb-3">
+                  <div class="col-12">
+                    <div class="alert alert-info py-2 mb-0">
+                      <i class="fas fa-info-circle"></i> Đang thao tác cho:
+                      <b id="displayEmpName"></b>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label
+                      >Chọn Khoa / Phòng ban
+                      <span class="text-danger">*</span></label
+                    >
+                    <select
+                      class="form-control"
+                      id="epDepartment"
+                      required
+                      onchange="handleDepartmentChange()"
+                    >
+                      <option value="">-- Chọn Khoa --</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label
+                      >Chức vụ / Vị trí phân công
+                      <span class="text-danger">*</span></label
+                    >
+                    <select class="form-control" id="epPosition" required>
+                      <option value="">-- Vui lòng chọn Khoa trước --</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label
+                      >Ngày bắt đầu <span class="text-danger">*</span></label
+                    >
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="epStartDate"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label>Ngày kết thúc (Bỏ trống nếu đang đương nhiệm)</label>
+                    <input type="date" class="form-control" id="epEndDate" />
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <label>Số Quyết định / Mô tả</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="epDesc"
+                      placeholder="VD: QĐ 123/2026..."
+                    />
+                  </div>
+                  <div class="col-md-6 form-group">
+                    <label>Ghi chú thêm</label>
+                    <input type="text" class="form-control" id="epNote" />
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer bg-light">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  Hủy bỏ
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i> Lưu thông tin
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <footer class="main-footer">
+        <strong>Copyright &copy; 2026 HR Management System.</strong>
+      </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+      const token = localStorage.getItem("token");
+      const API_HISTORY = "http://localhost:8080/api/employee-positions";
+      const API_EMPLOYEES = "http://localhost:8080/api/employees";
+      const API_DEPARTMENTS = "http://localhost:8080/api/departments";
+      const API_POSITIONS_BY_DEPT =
+        "http://localhost:8080/api/positions/department";
+
+      let historyData = [];
+
+      if (!token) window.location.href = "login.html";
+      document.getElementById("displayUsername").innerText =
+        localStorage.getItem("username") || "Admin";
+
+      function handleLogout() {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        window.location.href = "login.html";
+      }
+
+      const getHeaders = () => ({
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      });
+
+      // 1. Tải danh sách Nhân viên vào thẻ Select lớn
+      async function initEmployees() {
+        try {
+          const res = await fetch(API_EMPLOYEES, { headers: getHeaders() });
+          if (res.ok) {
+            const emps = await res.json();
+            const selectEmp = document.getElementById("filterEmployee");
+            // Thêm option xem tất cả để tận dụng API /all
+            selectEmp.innerHTML =
+              '<option value="">-- Xem tất cả lịch sử --</option>';
+            emps.forEach((e) => {
+              selectEmp.innerHTML += `<option value="${e.id}">${e.fullName} (${e.code})</option>`;
+            });
+
+            // Sau khi load nhân viên xong, tự động gọi loadHistory để hiện danh sách /all
+            loadHistory();
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // 2. Tải danh sách Khoa vào Modal
+      async function initDepartments() {
+        try {
+          const res = await fetch(API_DEPARTMENTS, { headers: getHeaders() });
+          if (res.ok) {
+            const depts = await res.json();
+            const selectDept = document.getElementById("epDepartment");
+            selectDept.innerHTML =
+              '<option value="">-- Chọn Khoa / Phòng ban --</option>';
+            depts.forEach((d) => {
+              selectDept.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+            });
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // 3. Tải Chức vụ theo Khoa (Trong Modal)
+      async function handleDepartmentChange(selectedPosId = null) {
+        const deptId = document.getElementById("epDepartment").value;
+        const selectPos = document.getElementById("epPosition");
+
+        if (!deptId) {
+          selectPos.innerHTML =
+            '<option value="">-- Vui lòng chọn Khoa trước --</option>';
+          return;
+        }
+
+        selectPos.innerHTML = '<option value="">Đang tải chức vụ...</option>';
+        try {
+          const res = await fetch(`${API_POSITIONS_BY_DEPT}/${deptId}`, {
+            headers: getHeaders(),
+          });
+          if (res.ok) {
+            const positions = await res.json();
+            selectPos.innerHTML =
+              '<option value="">-- Chọn Chức vụ --</option>';
+            positions.forEach((p) => {
+              selectPos.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+            });
+            if (selectedPosId) selectPos.value = selectedPosId;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // 4. Cập nhật hàm loadHistory để xử lý cả trường hợp xem "Tất cả"
+      async function loadHistory() {
+        const empId = document.getElementById("filterEmployee").value;
+        const tbody = document.getElementById("tableBody");
+        const btnAdd = document.getElementById("btnAddHistory");
+
+        // Nếu có empId thì lấy theo NV, nếu không thì lấy /all
+        const url = empId
+          ? `${API_HISTORY}/employee/${empId}`
+          : `${API_HISTORY}/all`;
+
+        // Chỉ cho phép "Thêm mới" khi đã chọn một nhân viên cụ thể
+        btnAdd.disabled = !empId;
+
+        tbody.innerHTML =
+          '<tr><td colspan="7" class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>';
+
+        try {
+          const res = await fetch(url, { headers: getHeaders() });
+          if (res.ok) {
+            historyData = await res.json();
+            renderTable(historyData);
+          } else {
+            tbody.innerHTML =
+              '<tr><td colspan="7" class="text-center text-danger">Không thể tải dữ liệu từ máy chủ.</td></tr>';
+          }
+        } catch (e) {
+          console.error(e);
+          tbody.innerHTML =
+            '<tr><td colspan="7" class="text-center text-danger">Lỗi kết nối API.</td></tr>';
+        }
+      }
+
+      function formatDisplayDate(dateString) {
+        if (!dateString) return "Đang đương nhiệm";
+        // Cắt bỏ phần giờ (T00:00:00) để hiển thị ngày
+        return dateString.substring(0, 10);
+      }
+
+      function renderTable(data) {
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+        if (data.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="7" class="text-center">Chưa có lịch sử phân công cho nhân viên này.</td></tr>';
+          return;
+        }
+        data.forEach((ep, index) => {
+          const endDateStr = formatDisplayDate(ep.endDate);
+          const isCurrent = endDateStr === "Đang đương nhiệm";
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td><b>${ep.positionName}</b></td>
+        <td>${ep.departmentName}</td>
+        <td>${formatDisplayDate(ep.startDate)}</td>
+        <td><span class="badge ${isCurrent ? "badge-success" : "badge-secondary"}">${endDateStr}</span></td>
+        <td>${ep.description || ""}</td>
+        <td class="text-center">
+          <button class="btn btn-sm btn-info mr-1" onclick="openModal('EDIT', '${ep.id}')"><i class="fas fa-edit"></i></button>
+          <button class="btn btn-sm btn-danger" onclick="deleteHistory('${ep.id}')"><i class="fas fa-trash"></i></button>
+        </td>
+      `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // 5. Mở Modal
+      async function openModal(mode, id = null) {
+        const form = document.getElementById("historyForm");
+        form.reset();
+
+        // Lấy tên Nhân viên đang chọn để hiển thị lên Form cho người dùng yên tâm
+        const selectEmp = document.getElementById("filterEmployee");
+        document.getElementById("displayEmpName").innerText =
+          selectEmp.options[selectEmp.selectedIndex].text;
+
+        if (mode === "ADD") {
+          document.getElementById("modalTitle").innerText =
+            "Thêm mới Phân công";
+          document.getElementById("epId").value = "";
+          document.getElementById("epPosition").innerHTML =
+            '<option value="">-- Vui lòng chọn Khoa trước --</option>';
+        } else if (mode === "EDIT") {
+          document.getElementById("modalTitle").innerText = "Cập nhật Lịch sử";
+          const ep = historyData.find((e) => e.id === id);
+
+          if (ep) {
+            document.getElementById("epId").value = ep.id;
+            document.getElementById("epDesc").value = ep.description || "";
+            document.getElementById("epNote").value = ep.note || "";
+
+            // MẸO XỬ LÝ NGÀY: Cắt chuỗi LocalDateTime (VD: 2026-04-15T00:00:00) lấy 10 ký tự đầu để set vào type="date"
+            if (ep.startDate)
+              document.getElementById("epStartDate").value =
+                ep.startDate.substring(0, 10);
+            if (ep.endDate)
+              document.getElementById("epEndDate").value = ep.endDate.substring(
+                0,
+                10,
+              );
+
+            // Do Backend trả về DTO chưa có DepartmentId của cái Position đó (chỉ có Tên),
+            // Nên ta phải tìm Khoa chứa chức vụ đó. Để đơn giản, chức năng Edit tạm thời yêu cầu
+            // người dùng chọn lại Khoa và Chức vụ. (Hoặc bạn có thể gọi API chi tiết nếu muốn nâng cấp)
+            Swal.fire(
+              "Lưu ý",
+              "Vui lòng chọn lại Khoa và Chức vụ khi cập nhật.",
+              "info",
+            );
+          }
+        }
+        $("#historyModal").modal("show");
+      }
+
+      // 6. Lưu dữ liệu
+      document
+        .getElementById("historyForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const id = document.getElementById("epId").value;
+          const empId = document.getElementById("filterEmployee").value;
+
+          // MẸO GỬI NGÀY: Nối thêm T00:00:00 để Spring Boot hiểu là LocalDateTime
+          const rawStart = document.getElementById("epStartDate").value;
+          const rawEnd = document.getElementById("epEndDate").value;
+          const formattedStartDate = rawStart ? rawStart + "T00:00:00" : null;
+          const formattedEndDate = rawEnd ? rawEnd + "T00:00:00" : null;
+
+          const requestData = {
+            employeeId: empId,
+            positionId: document.getElementById("epPosition").value,
+            description: document.getElementById("epDesc").value,
+            note: document.getElementById("epNote").value,
+            startDate: formattedStartDate,
+            endDate: formattedEndDate,
+          };
+
+          const isEdit = id !== "";
+          const url = isEdit ? `${API_HISTORY}/${id}` : API_HISTORY;
+          const method = isEdit ? "PUT" : "POST";
+
+          try {
+            const response = await fetch(url, {
+              method: method,
+              headers: getHeaders(),
+              body: JSON.stringify(requestData),
+            });
+
+            if (response.ok) {
+              $("#historyModal").modal("hide");
+              Swal.fire("Thành công", "Đã lưu thông tin phân công!", "success");
+              loadHistory(); // Load lại bảng của nhân viên hiện tại
+            } else {
+              const errorText = await response.text();
+              Swal.fire("Lỗi", errorText, "error");
+            }
+          } catch (error) {
+            Swal.fire("Lỗi", "Không thể kết nối máy chủ", "error");
+          }
+        });
+
+      // 7. Xóa dữ liệu
+      function deleteHistory(id) {
+        Swal.fire({
+          title: "Xóa bản ghi này?",
+          text: "Lịch sử công tác này sẽ được xóa.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "Đồng ý xóa",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const response = await fetch(`${API_HISTORY}/${id}`, {
+                method: "DELETE",
+                headers: getHeaders(),
+              });
+
+              if (response.ok) {
+                Swal.fire("Đã xóa!", "Cập nhật thành công.", "success");
+                loadHistory();
+              } else {
+                Swal.fire("Lỗi", await response.text(), "error");
+              }
+            } catch (error) {
+              Swal.fire("Lỗi", "Không thể kết nối máy chủ", "error");
+            }
+          }
+        });
+      }
+
+      // Chạy khi trang vừa tải
+      $(document).ready(function () {
+        initEmployees();
+        initDepartments();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+/* Custom Styles for HR Management System */
+
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    background-color: #f4f6f9; 
+}
+
+.sidebar { 
+    background-color: #343a40; 
+    min-height: 100vh; 
+}
+
+.sidebar-item { 
+    color: #c2c7d0; 
+    padding: 12px 20px; 
+    display: block; 
+    text-decoration: none; 
+    transition: 0.2s; 
+}
+
+.sidebar-item:hover, .sidebar-item.active { 
+    background-color: #494e53; 
+    color: #fff; 
+}
+
+.sidebar-item.active {
+    border-left: 4px solid #3b82f6; 
+}
+
+.sidebar-heading { 
+    color: #6c757d; 
+    font-size: 0.75rem; 
+    font-weight: 600; 
+    padding: 16px 20px 8px; 
+    text-transform: uppercase; 
+}
+
+/* Tùy chỉnh thanh cuộn cho Sidebar */
+.sidebar nav::-webkit-scrollbar {
+    width: 5px;
+}
+.sidebar nav::-webkit-scrollbar-thumb {
+    background: #555; 
+}
