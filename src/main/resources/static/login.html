@@ -95,11 +95,11 @@
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script >
+    <script>
       document
         .getElementById("loginForm")
         .addEventListener("submit", async function (e) {
-          e.preventDefault(); // Ngăn load lại trang
+          e.preventDefault();
 
           const username = document.getElementById("username").value;
           const password = document.getElementById("password").value;
@@ -110,19 +110,16 @@
             '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
 
           try {
-            const response = await fetch(
-              "http://localhost:8080/api/auth/login",
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
-              },
-            );
+            // SỬA TẠI ĐÂY: Sử dụng đường dẫn tương đối thay vì localhost
+            const response = await fetch("/api/auth/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username, password }),
+            });
 
             const data = await response.json();
 
             if (response.ok) {
-              // Lưu Token và Username vào LocalStorage
               localStorage.setItem("token", data.accessToken);
               localStorage.setItem("username", data.username);
 
@@ -132,7 +129,7 @@
                 showConfirmButton: false,
                 timer: 1500,
               }).then(() => {
-                window.location.href = "index.html"; // Chuyển hướng sang trang Dashboard
+                window.location.href = "index.html";
               });
             } else {
               Swal.fire(
@@ -142,9 +139,10 @@
               );
             }
           } catch (error) {
+            console.error("Lỗi:", error);
             Swal.fire(
               "Lỗi kết nối",
-              "Không thể kết nối đến máy chủ Backend",
+              "Không thể kết nối đến máy chủ Backend. Hãy chắc chắn Server và Database đang chạy!",
               "error",
             );
           } finally {
