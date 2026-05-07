@@ -232,10 +232,10 @@
         try {
           // Gọi song song các API để tăng tốc độ tải trang
           const [deptRes, posRes, empRes, historyRes] = await Promise.all([
-            fetch("http://localhost:8080/api/departments", { headers }),
-            fetch("http://localhost:8080/api/positions", { headers }),
-            fetch("http://localhost:8080/api/employees", { headers }),
-            fetch("http://localhost:8080/api/employee-positions/all", {
+            fetch("http:///api/departments", { headers }),
+            fetch("http:///api/positions", { headers }),
+            fetch("http:///api/employees", { headers }),
+            fetch("http:///api/employee-positions/all", {
               headers,
             }),
           ]);

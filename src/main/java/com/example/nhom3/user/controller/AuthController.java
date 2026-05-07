@@ -26,7 +26,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    // API Đăng ký: POST http://localhost:8080/api/auth/register
+    // API Đăng ký: POST http:///api/auth/register
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest registerDto) {
         try {
@@ -37,7 +37,7 @@ public class AuthController {
         }
     }
 
-    // API Đăng nhập: POST http://localhost:8080/api/auth/login
+    // API Đăng nhập: POST http:///api/auth/login
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponse> login(@Valid @RequestBody LoginRequest loginDto) {
         JwtAuthResponse jwtAuthResponse = authService.login(loginDto);
