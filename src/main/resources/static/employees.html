@@ -387,6 +387,7 @@
 
         try {
           const res = await fetch(`${API_POSITIONS_BY_DEPT}/${deptId}`, {
+            method: "GET",
             headers: getHeaders(),
           });
           if (res.ok) {
