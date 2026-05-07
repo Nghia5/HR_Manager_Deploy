@@ -37,50 +37,55 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // BẬT CẤU HÌNH CORS TOÀN CỤC CHO SPRING SECURITY
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        // Thêm dòng này trước anyRequest để xác định rõ quyền cho các cụm API
-                        .requestMatchers("/api/employee-positions/**").authenticated()
-                        .requestMatchers("/api/employees/**").authenticated()
-                        .requestMatchers("/api/departments/**").authenticated()
-                        .requestMatchers("/api/positions/**").authenticated()
-                        .anyRequest().authenticated())
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                
+                // 1. CHO PHÉP TRUY CẬP API AUTH (Đăng nhập, Quên mật khẩu)
+                .requestMatchers("/api/auth/**").permitAll()
+
+                // 2. MỞ CỬA CHO GIAO DIỆN TĨNH (Rất quan trọng để fix 403)
+                // Cho phép vào link gốc, các file .html và tài nguyên trong static
+                .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/images/**", "/assets/**").permitAll()
+
+                // 3. CÁC API NGHIỆP VỤ YÊU CẦU ĐĂNG NHẬP
+                .requestMatchers("/api/employee-positions/**").authenticated()
+                .requestMatchers("/api/employees/**").authenticated()
+                .requestMatchers("/api/departments/**").authenticated()
+                .requestMatchers("/api/positions/**").authenticated()
+                
+                .anyRequest().authenticated())
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // ĐỊNH NGHĨA CHI TIẾT CÁC LUẬT CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Cấp phép cho các cổng Frontend của bạn (VS Code Live Server, React, v.v.)
+        // Cấp phép cho các nguồn truy cập (Thêm link Render của bạn vào đây)
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://127.0.0.1:5500",
                 "http://localhost:5500",
-                "http://localhost:3000"));
+                "http://localhost:3000",
+                "https://hr-manager-deploy-1.onrender.com" 
+        ));
 
-        // Cấp phép cho các method
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // Cấp phép cho các Header (Quan trọng nhất là Authorization để gửi Token)
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "accept",
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization", "Content-Type", "X-Requested-With", "accept",
                 "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
-
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Áp dụng cho mọi API
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
